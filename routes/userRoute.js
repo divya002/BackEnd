@@ -13,7 +13,7 @@ var routes = function (userRegister) {
     userRegisterRouter.route('/checkemail')
         .post(userRegisterController.checkEmailAvailability);
     userRegisterRouter.route('/checkmobile')
-        .post(userRegisterController.checkMobileAvailability);
+        .get(userRegisterController.checkMobileAvailability);
     userRegisterRouter.route('/sendotp')
         .get(userRegisterController.sendotp);
     userRegisterRouter.route('/retryotp')

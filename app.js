@@ -9,9 +9,9 @@ var db = mongoose.connect('mongodb://divya:divya002@ds159634.mlab.com:59634/near
 }, (err) => {
     if (!err)
         console.log("MongoDB DataBase Connected");
-        else{
-            console.log("Error in connection with database");
-        }
+    else {
+        console.log("Error in connection with database");
+    }
 });
 var userRegister = require("./model/registrationModel");
 var customerComplaint = require("./model/customerComplaintModel");

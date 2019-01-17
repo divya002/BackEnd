@@ -129,18 +129,18 @@ var registrationController = function (userRegister) {
     };
 
     var checkMobileAvailability = async function (req, res) {
-        var loginData = req.body;
+        var number = req.query.mobile;
         var mobile = await userRegister.findOne({
-            mobile: loginData.mobile
+            mobile: number
         });
         if (mobile)
-            return res.json({
+            return res.status(401).send({
                 message: 'This mobile already registered',
                 valid: false
             });
         else {
-            return res.json({
-                message: 'Looks Good number',
+            return res.status(201).send({
+                message: 'Looks Good..',
                 valid: true
             });
         }
@@ -152,14 +152,12 @@ var registrationController = function (userRegister) {
             sub: user._id
         };
 
-        var token = jwt.encode(payload, '123');
+        var token = jwt.encode(payload, 'nearme@12#$');
 
         res.send(201, {
             token: token,
             userid:user._id,
             type: user.type
-            // email: user.email
-
         });
     }
     var auth = {
@@ -171,7 +169,7 @@ var registrationController = function (userRegister) {
 
             var token = req.header('authorization').split(' ')[1];
 
-            var payload = jwt.decode(token, '123');
+            var payload = jwt.decode(token, 'nearme@12#$');
 
             if (!payload)
                 return res.status(401).send({
