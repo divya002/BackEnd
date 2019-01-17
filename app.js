@@ -3,7 +3,7 @@ var express = require("express"),
     bodyParser = require('body-parser');
 var cors = require('cors');
 var jwt = require('jwt-simple');
-var db = mongoose.connect('mongodb://divya:divya002@ds115870.mlab.com:15870/neutrinos_customer_complaint_forum', {
+var db = mongoose.connect('mongodb://divya:divya002@ds159634.mlab.com:59634/nearme', {
     //useMongoClient: true
     useNewUrlParser: true
 }, (err) => {

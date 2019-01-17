@@ -1,5 +1,5 @@
 {
-  "name": "Nearme Backend API",
+  "name": "nearme-apii",
   "version": "1.0.0",
   "description": "NEARME:Project by DCD Team",
   "main": "app.js",
@@ -20,5 +20,9 @@
     "jwt-simple": "^0.5.5",
     "mongoose": "^5.3.14",
     "sendotp": "^1.2.9"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-preset-es2015": "^6.24.1"
   }
 }
