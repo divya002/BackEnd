@@ -1,7 +1,7 @@
 var bcrypt = require('bcrypt-nodejs');
 var jwt = require('jwt-simple');
 const SendOtp = require('sendotp');
-const sendOtp = new SendOtp('255885AOz0JbwCJORD5c3618f7', 'Nearme Authentication OTP is {{otp}}, Please do not share it with anybody');
+const sendOtp = new SendOtp('233044AQFlg7c95b7cecc5', 'Nearme Authentication OTP is {{otp}}, Please do not share it with anybody');
 sendOtp.setOtpExpiry('60');
 
 var registrationController = function (userRegister) {
