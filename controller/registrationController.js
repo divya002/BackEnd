@@ -1,19 +1,24 @@
 var bcrypt = require('bcrypt-nodejs');
 var jwt = require('jwt-simple');
+const SendOtp = require('sendotp');
+const sendOtp = new SendOtp('255885AOz0JbwCJORD5c3618f7', 'Nearme Authentication OTP is {{otp}}, Please do not share it with anybody');
+sendOtp.setOtpExpiry('60');
 
 var registrationController = function (userRegister) {
-    var get = function (req, res) {
+
+    var showUsers = function (req, res) {
         query = {};
 
         userRegister.find(query, function (err, users) {
             if (err)
                 res.status(500).send(err);
             else {
-                res.json(users);
+                res.send(200, users);
             }
         });
     };
-    var post = function (req, res) {
+
+    var registerUser = function (req, res) {
         var user = new userRegister(req.body);
         // user.save();
         user.save((err, newUser) => {
@@ -26,22 +31,60 @@ var registrationController = function (userRegister) {
         });
         // res.status(201).send(user);
     };
+    var findIdMiddleware = function (req, res, next) {
+        userRegister.findById(req.params.userid, function (err, user) {
+            if (err)
+                res.status(500).send(err);
+            else if (user) {
+                req.user = user;
+                next();
+            } else {
+                res.status(200).send("No user Found")
+            }
+        });
+    };
+    var sendotp = function (req, res) {
+        var mobile = req.query.mobile;
+        sendOtp.send(mobile, "Nearme", function (error, data) {
+            console.log(data);
+            res.json(data);
+        });
+    };
+
+    var retryotp = function (req, res) {
+        var mobile = req.query.mobile;
+        sendOtp.retry(mobile, false, function (error, data) {
+            console.log(data);
+            res.json(data);
+        });
+    };
+
+    var verifyotp = function (req, res) {
+        var mobile = req.body.mobile;
+        var otp = req.body.otp;
+        sendOtp.verify(mobile, otp, function (error, data) {
+            console.log(data); // data object with keys 'message' and 'type'
+            if (data.type == 'success') res.send('OTP verified successfully')
+            if (data.type == 'error') res.send('OTP verification failed')
+        });
+    };
+
     var login = async function (req, res) {
         var loginData = req.body;
 
         var user = await userRegister.findOne({
-            email: loginData.email
+            mobile: loginData.mobile
         });
 
         if (!user)
             return res.status(401).send({
-                message: 'Email or Password invalid'
+                message: 'User not Found'
             });
 
         bcrypt.compare(loginData.password, user.password, (err, isMatch) => {
             if (!isMatch)
                 return res.status(401).send({
-                    message: 'Email or Password invalid'
+                    message: 'Password invalid..Please try again.'
                 });
 
             createSendToken(res, user);
@@ -67,6 +110,24 @@ var registrationController = function (userRegister) {
         }
 
     }
+
+    var updatePassword = function (req, res) {
+        if (req.body._id)
+            delete req.body._id;
+        for (var p in req.body) {
+            req.user[p] = req.body[p];
+        }
+        req.user.save(function (err) {
+            if (err)
+                res.status(500).send(err);
+            else {
+                var returnUser = {};
+                returnUser.result = req.user;
+                res.status(200).send(returnUser);
+            }
+        });
+    };
+
     var checkMobileAvailability = async function (req, res) {
         var loginData = req.body;
         var mobile = await userRegister.findOne({
@@ -93,10 +154,11 @@ var registrationController = function (userRegister) {
 
         var token = jwt.encode(payload, '123');
 
-        res.status(200).send({
+        res.send(201, {
             token: token,
-            type: user.type,
-            email:user.email
+            userid:user._id,
+            type: user.type
+            // email: user.email
 
         });
     }
@@ -122,9 +184,14 @@ var registrationController = function (userRegister) {
         }
     }
     return {
-        post: post,
-        get: get,
+        showUsers: showUsers,
+        registerUser: registerUser,
         login: login,
+        findIdMiddleware: findIdMiddleware,
+        sendotp: sendotp,
+        verifyotp: verifyotp,
+        retryotp: retryotp,
+        updatePassword: updatePassword,
         checkEmailAvailability: checkEmailAvailability,
         checkMobileAvailability: checkMobileAvailability,
         auth: auth

@@ -3,17 +3,21 @@ var mongoose = require('mongoose'),
 var bcrypt = require('bcrypt-nodejs');
 
 var registrationModel = new Schema({
-    email: {
-        type: String
+    fullName: {
+        type: String,
+        required:true
     },
     mobile: {
-        type: String
+        type:Number,
+        required:true
     },
     password: {
-        type: String
+        type: String,
+        required:true
     },
     type: {
-        type: String
+        type: String,
+        required:true
     },
 
 });
