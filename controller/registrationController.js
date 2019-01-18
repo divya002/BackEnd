@@ -39,7 +39,7 @@ var registrationController = function (userRegister) {
                 req.user = user;
                 next();
             } else {
-                res.status(200).send("No user Found")
+                res.status(200).send("No user Found");
             }
         });
     };
@@ -65,10 +65,10 @@ var registrationController = function (userRegister) {
         sendOtp.verify(mobile, otp, function (error, data) {
             console.log(data); // data object with keys 'message' and 'type'
             if (data.type == 'success') res.status(200).send({
-                message: 'OTP verified successfully'
+                message: 'OTP verified successfully.'
             });
             if (data.type == 'error') res.status(200).send({
-                message: 'OTP verification failed'
+                message: 'OTP verification failed.'
             });
         });
     };
