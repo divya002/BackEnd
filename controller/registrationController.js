@@ -64,8 +64,12 @@ var registrationController = function (userRegister) {
         var otp = req.body.otp;
         sendOtp.verify(mobile, otp, function (error, data) {
             console.log(data); // data object with keys 'message' and 'type'
-            if (data.type == 'success') res.send('OTP verified successfully')
-            if (data.type == 'error') res.send('OTP verification failed')
+            if (data.type == 'success') res.status(200).send({
+                message: 'OTP verified successfully'
+            });
+            if (data.type == 'error') res.status(200).send({
+                message: 'OTP verification failed'
+            });
         });
     };
 
@@ -156,7 +160,7 @@ var registrationController = function (userRegister) {
 
         res.send(201, {
             token: token,
-            userid:user._id,
+            userid: user._id,
             type: user.type
         });
     }
